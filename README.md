@@ -4,10 +4,11 @@
 # **🚀 Project Overview**
   Predicting AQI is challenging due to extreme seasonal variance and high feature dependency. This project implements a full data science pipeline, achieving a peak $R^2$ score of 99.31%.
 
-# Key HighlightsDual-Model Approach:
-- Compares traditional regression models with multi-layer Artificial Neural Networks.
-- Large-Scale Data: Processed 201,664 observations from 23 monitoring stations.
-- High Precision: Achieved an RMSE of 0.08, ensuring reliability even during high-pollution "Hazardous" events.
+# Key Highlights
+  - Dual-Model Approach:
+  - Compares traditional regression models with multi-layer Artificial Neural Networks.
+  - Large-Scale Data: Processed 201,664 observations from 23 monitoring stations.
+  - High Precision: Achieved an RMSE of 0.08, ensuring reliability even during high-pollution "Hazardous" events.
 
 # **🛠️ Methodology & Tech Stack1.**
   1. Classical Machine Learning
