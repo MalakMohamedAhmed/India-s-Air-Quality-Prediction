@@ -73,9 +73,14 @@ with st.sidebar:
     selected_season = st.radio("Select Season", seasons)
     
     st.header("⏰ Date & Time")
-    month = st.slider("Month", 1, 12, 1)
+    month = st.slider("Month", 1, 12, 6)
+    st.caption("📊 Training range: 1 - 12")
+    
     hour = st.slider("Hour", 0, 23, 12)
+    st.caption("📊 Training range: 6 - 23")
+    
     is_weekend = st.radio("Is Weekend?", [0.0, 1.0])
+    st.caption("📊 0 = Weekday, 1 = Weekend")
 
 st.subheader("🏭 Pollutant Concentrations")
 col1, col2, col3 = st.columns(3)
@@ -83,21 +88,38 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("**Gaseous Pollutants**")
     o3 = st.number_input("O3 (µg/m³)", value=50.0, min_value=0.0, help="Ozone concentration")
+    st.caption("📊 Training range: 12 - 84")
+    
     so2 = st.number_input("SO2 (µg/m³)", value=10.0, min_value=0.0, help="Sulfur dioxide concentration")
+    st.caption("📊 Training range: 4 - 121")
+    
     no2 = st.number_input("NO2 (µg/m³)", value=40.0, min_value=0.0, help="Nitrogen dioxide concentration")
+    st.caption("📊 Training range: 8 - 593")
 
 with col2:
-    st.markdown("**Other Pollutants**")
+    st.markdown("**Particulate Matter**")
     co = st.number_input("CO (mg/m³)", value=1.0, min_value=0.0, help="Carbon monoxide concentration")
+    st.caption("📊 Training range: 0.3 - 22.67")
+    
     pm10 = st.number_input("PM10 (µg/m³)", value=100.0, min_value=0.0, help="Particulate matter ≤10 micrometers")
+    st.caption("📊 Training range: 24 - 1979")
+    
     pm25 = st.number_input("PM2.5 (µg/m³)", value=50.0, min_value=0.0, max_value=pm10 if pm10 > 0 else 1000.0, help="Particulate matter ≤2.5 micrometers")
+    st.caption("📊 Training range: 15 - 900")
 
 with col3:
     st.markdown("**Weather Conditions**")
     temp = st.number_input("Temperature (°C)", value=25.0, help="Air temperature")
+    st.caption("📊 Training range: 6 - 44")
+    
     humidity = st.number_input("Humidity (%)", value=50.0, min_value=0.0, max_value=100.0, help="Relative humidity")
+    st.caption("📊 Training range: 20 - 100")
+    
     wind_speed = st.number_input("Wind Speed (m/s)", value=5.0, min_value=0.0, help="Wind speed")
+    st.caption("📊 Training range: 2.1 - 31.5")
+    
     visibility = st.number_input("Visibility (km)", value=10.0, min_value=0.0, help="Visibility distance")
+    st.caption("📊 Training range: 0.2 - 15")
 
 # --- 5. Prediction Logic ---
 if st.button("🔮 Predict Air Quality Index", type="primary"):
@@ -110,6 +132,36 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
             humidity < 0, humidity > 100, wind_speed < 0, visibility < 0]):
         st.error("❌ Please ensure all values are non-negative and humidity is 0-100%.")
         st.stop()
+    
+    # Check if values are outside training range and warn user
+    warnings = []
+    if o3 < 12 or o3 > 84:
+        warnings.append(f"O3 ({o3:.1f}) is outside training range (12-84)")
+    if so2 < 4 or so2 > 121:
+        warnings.append(f"SO2 ({so2:.1f}) is outside training range (4-121)")
+    if no2 < 8 or no2 > 593:
+        warnings.append(f"NO2 ({no2:.1f}) is outside training range (8-593)")
+    if co < 0.3 or co > 22.67:
+        warnings.append(f"CO ({co:.2f}) is outside training range (0.3-22.67)")
+    if pm10 < 24 or pm10 > 1979:
+        warnings.append(f"PM10 ({pm10:.1f}) is outside training range (24-1979)")
+    if pm25 < 15 or pm25 > 900:
+        warnings.append(f"PM2.5 ({pm25:.1f}) is outside training range (15-900)")
+    if temp < 6 or temp > 44:
+        warnings.append(f"Temperature ({temp:.1f}°C) is outside training range (6-44)")
+    if humidity < 20 or humidity > 100:
+        warnings.append(f"Humidity ({humidity:.1f}%) is outside training range (20-100)")
+    if wind_speed < 2.1 or wind_speed > 31.5:
+        warnings.append(f"Wind Speed ({wind_speed:.1f}) is outside training range (2.1-31.5)")
+    if visibility < 0.2 or visibility > 15:
+        warnings.append(f"Visibility ({visibility:.1f}) is outside training range (0.2-15)")
+    if hour < 6 or hour > 23:
+        warnings.append(f"Hour ({hour}) is outside training range (6-23)")
+    
+    if warnings:
+        st.warning("⚠️ **Warning:** The following values are outside the training data range. Predictions may be less accurate:")
+        for warning in warnings:
+            st.write(f"  • {warning}")
     
     # Calculate GPI and PM_coarse from user inputs
     gpi = calculate_gpi(so2, no2, co)
