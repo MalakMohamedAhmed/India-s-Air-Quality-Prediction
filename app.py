@@ -59,18 +59,23 @@ with col1:
     is_weekend = st.radio("Is Weekend?", [0.0, 1.0])
 
 with col2:
-    o3 = st.number_input("O3", value=0.0)
+    o3 = st.number_input("O3", value=0.0, min_value=0.0)  # Prevent negative
     temp = st.number_input("Temperature", value=25.0)
-    humidity = st.number_input("Humidity (%)", value=50.0)
-    wind_speed = st.number_input("Wind Speed", value=5.0)
+    humidity = st.number_input("Humidity (%)", value=50.0, min_value=0.0, max_value=100.0)
+    wind_speed = st.number_input("Wind Speed", value=5.0, min_value=0.0)
 
 with col3:
-    visibility = st.number_input("Visibility", value=10.0)
-    gpi = st.number_input("GPI (Gaseous Pollutant Index)", value=0.0)
-    pm_coarse = st.number_input("PM Coarse", value=0.0)
+    visibility = st.number_input("Visibility", value=10.0, min_value=0.0)
+    gpi = st.number_input("GPI (Gaseous Pollutant Index)", value=0.0, min_value=0.0)
+    pm_coarse = st.number_input("PM Coarse", value=0.0, min_value=0.0)
 
 # --- 4. Prediction Logic ---
 if st.button("Predict Air Quality Index"):
+    # Basic input validation
+    if o3 < 0 or humidity < 0 or humidity > 100 or wind_speed < 0 or visibility < 0 or gpi < 0 or pm_coarse < 0:
+        st.error("Please ensure all pollutant and weather values are non-negative and humidity is 0-100%.")
+        st.stop()
+    
     # Initialize input list with 45 features (excluding aqi and aqi_category)
     # Order: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility, GPI, pm_coarse,
     # season_post_monsoon, season_summer, season_winter,
@@ -125,13 +130,21 @@ if st.button("Predict Air Quality Index"):
     try:
         # Scale -> Predict -> Inverse Scale
         scaled_input = scaler_x.transform(final_input)
+        st.write(f"Debug - Scaled Input: {scaled_input}")  # Debug: Check scaled input
+        
         prediction_scaled = model.predict(scaled_input)
+        st.write(f"Debug - Model Prediction (Scaled): {prediction_scaled}")  # Debug: Check model output
+        
         prediction_final = scaler_y.inverse_transform(prediction_scaled)
+        st.write(f"Debug - Inverse Transformed Prediction: {prediction_final}")  # Debug: Check inverse transform
         
         aqi_res = prediction_final[0][0]
+        # Clip AQI to valid range [0, 500]
+        aqi_res = np.clip(aqi_res, 0, 500)
+        
         st.success(f"### Predicted AQI: {aqi_res:.2f}")
         
         if aqi_res <= 100:
             st.balloons()
     except Exception as e:
-        st.write(f"Prediction failed: {e}")  # Changed to st.write to avoid potential attribute issues
+        st.write(f"Prediction failed: {e}")
