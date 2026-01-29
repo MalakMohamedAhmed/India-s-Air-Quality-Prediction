@@ -11,10 +11,10 @@ dot = Image.open('dotby.png')
 indea = Image.open('indea.png')
 
 # 2. Display it in your app
-st.image(indea, caption='Our App Logo', width=300)
+st.image(indea, caption='dotby', width=300)
 
 # Or use it in the sidebar
-st.sidebar.image(dot, use_container_width=True)
+# st.sidebar.image(dot, use_container_width=True)
 
 @st.cache_resource
 def load_assets():
