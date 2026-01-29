@@ -4,10 +4,11 @@ import pandas as pd
 import joblib
 import tensorflow as tf
 
+# --- 1. Load Assets Safely ---
 @st.cache_resource
 def load_assets():
     # Use compile=False to avoid the 'mse' deserialization error
-    model = tf.models.load_model("model.h5", compile=False)
+    model = tf.keras.models.load_model("my_model.keras", compile=False)
     scaler_x = joblib.load("scaler_x.sav")
     scaler_y = joblib.load("scaler_y.sav")
     return model, scaler_x, scaler_y
@@ -15,6 +16,7 @@ def load_assets():
 model, scaler_x, scaler_y = load_assets()
 
 # --- 2. Feature Definitions ---
+# Based on DataFrame structure from screenshots:
 # Indices 0-7: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility
 # Index 8: aqi (TARGET - NOT a feature)
 # Indices 9-49: GPI, pm_coarse, season features (4), day of week features (7), station features (23), city features (5)
