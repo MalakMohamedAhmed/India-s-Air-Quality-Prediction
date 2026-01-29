@@ -18,12 +18,11 @@ model, scaler_x, scaler_y = load_assets()
 # --- 2. Feature Definitions ---
 # Based on DataFrame structure from screenshots:
 # Indices 0-7: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility
-# Index 8: aqi (target - NOT a feature)
-# Index 9: aqi_category (target - NOT a feature)
-# Indices 10-50: GPI, pm_coarse, season features, day of week features, station features, city features
-# Total features for input: 49 (0-7, 10-50)
+# Index 8: aqi (TARGET - NOT a feature)
+# Indices 9-49: GPI, pm_coarse, season features (4), day of week features (7), station features (23), city features (5)
+# Total features for input: 49 (all columns except index 8)
 
-# Lists for dummy variables to be handled by dropdowns
+# Lists for dummy variables
 stations = [
     'station_Anand Vihar, Delhi', 'station_Bawana, Delhi', 'station_Dwarka Sec 8, Delhi',
     'station_Faridabad New Town', 'station_Faridabad Sec 16A', 'station_Ghaziabad Loni',
@@ -38,8 +37,9 @@ stations = [
 cities = ['city_Delhi', 'city_Faridabad', 'city_Ghaziabad', 'city_Gurugram', 'city_Noida']
 
 days_of_week = [
-    'day_of_week_Monday', 'day_of_week_Saturday', 'day_of_week_Sunday',
-    'day_of_week_Thursday', 'day_of_week_Tuesday', 'day_of_week_Wednesday'
+    'day_of_week_Friday', 'day_of_week_Monday', 'day_of_week_Saturday',
+    'day_of_week_Sunday', 'day_of_week_Thursday', 'day_of_week_Tuesday',
+    'day_of_week_Wednesday'
 ]
 
 seasons = ['season_monsoon', 'season_post_monsoon', 'season_summer', 'season_winter']
@@ -52,12 +52,10 @@ with st.sidebar:
     st.header("📍 Location & Time")
     selected_city = st.selectbox("Select City", cities)
     selected_station = st.selectbox("Select Station", stations)
-    selected_day = st.selectbox("Day of Week", ["Friday"] + days_of_week)  # Friday is the reference (all dummies 0)
+    selected_day = st.selectbox("Day of Week", days_of_week)
     
     st.header("🗓️ Season")
-    # Using radio button for season selection (only one can be active)
-    season_options = ["None"] + seasons
-    selected_season = st.radio("Select Season", season_options)
+    selected_season = st.radio("Select Season", seasons)
 
 st.subheader("🧪 Pollutant Concentrations & Weather")
 col1, col2, col3 = st.columns(3)
@@ -85,19 +83,20 @@ if st.button("Predict Air Quality Index"):
         st.error("Please ensure all pollutant and weather values are non-negative and humidity is 0-100%.")
         st.stop()
     
-    # Initialize input list with 49 features (excluding aqi at index 8 and aqi_category at index 9)
-    # Structure based on DataFrame:
-    # 0: month, 1: hour, 2: is_weekend, 3: o3, 4: temperature, 5: humidity, 6: wind_speed, 7: visibility
-    # [skip 8: aqi, 9: aqi_category]
-    # 10: GPI, 11: pm_coarse
-    # 12-15: season_monsoon, season_post_monsoon, season_summer, season_winter
-    # 16-21: day_of_week_Monday, day_of_week_Saturday, day_of_week_Sunday, day_of_week_Thursday, day_of_week_Tuesday, day_of_week_Wednesday
-    # 22-44: 23 station dummies
-    # 45-49: 5 city dummies
+    # Initialize input list with 49 features (all columns except index 8 which is aqi)
+    # Feature order in the model input:
+    # 0-7: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility
+    # [skip index 8: aqi]
+    # 8: GPI (column 9 in dataframe)
+    # 9: pm_coarse (column 10 in dataframe)
+    # 10-13: season_monsoon, season_post_monsoon, season_summer, season_winter (columns 11-14)
+    # 14-20: day_of_week_Friday through Wednesday (columns 15-21)
+    # 21-43: 23 station dummies (columns 22-44)
+    # 44-48: 5 city dummies (columns 45-49)
     
     input_list = [0.0] * 49
     
-    # Set continuous values (indices 0-7)
+    # Set continuous values (indices 0-7 - same in both dataframe and model input)
     input_list[0] = float(month)
     input_list[1] = float(hour)
     input_list[2] = float(is_weekend)
@@ -107,11 +106,11 @@ if st.button("Predict Air Quality Index"):
     input_list[6] = float(wind_speed)
     input_list[7] = float(visibility)
     
-    # Set GPI and pm_coarse (indices 8-9 in our feature array, which maps to 10-11 in DataFrame)
+    # Set GPI and pm_coarse (indices 8-9 in model input, columns 9-10 in dataframe)
     input_list[8] = float(gpi)
     input_list[9] = float(pm_coarse)
     
-    # Set season dummies (indices 10-13 in our feature array, which maps to 12-15 in DataFrame)
+    # Set season dummies (indices 10-13 in model input, columns 11-14 in dataframe)
     season_mapping = {
         'season_monsoon': 10,
         'season_post_monsoon': 11,
@@ -121,28 +120,28 @@ if st.button("Predict Air Quality Index"):
     if selected_season in season_mapping:
         input_list[season_mapping[selected_season]] = 1.0
     
-    # Set day of week dummy (indices 14-19 in our feature array, which maps to 16-21 in DataFrame)
-    # Friday is reference, all 0
+    # Set day of week dummy (indices 14-20 in model input, columns 15-21 in dataframe)
     day_mapping = {
-        'day_of_week_Monday': 14,
-        'day_of_week_Saturday': 15,
-        'day_of_week_Sunday': 16,
-        'day_of_week_Thursday': 17,
-        'day_of_week_Tuesday': 18,
-        'day_of_week_Wednesday': 19
+        'day_of_week_Friday': 14,
+        'day_of_week_Monday': 15,
+        'day_of_week_Saturday': 16,
+        'day_of_week_Sunday': 17,
+        'day_of_week_Thursday': 18,
+        'day_of_week_Tuesday': 19,
+        'day_of_week_Wednesday': 20
     }
     if selected_day in day_mapping:
         input_list[day_mapping[selected_day]] = 1.0
     
-    # Set station dummy (indices 20-42 in our feature array, which maps to 22-44 in DataFrame)
-    station_start = 20
+    # Set station dummy (indices 21-43 in model input, columns 22-44 in dataframe)
+    station_start = 21
     for i, st_name in enumerate(stations):
         if st_name == selected_station:
             input_list[station_start + i] = 1.0
             break
     
-    # Set city dummy (indices 43-47 in our feature array, which maps to 45-49 in DataFrame)
-    city_start = 43
+    # Set city dummy (indices 44-48 in model input, columns 45-49 in dataframe)
+    city_start = 44
     for i, ct in enumerate(cities):
         if ct == selected_city:
             input_list[city_start + i] = 1.0
@@ -159,7 +158,7 @@ if st.button("Predict Air Quality Index"):
         st.write(f"**Non-zero Features:**")
         non_zero_indices = np.where(final_input[0] != 0)[0]
         for idx in non_zero_indices:
-            st.write(f"  - Index {idx}: {final_input[0][idx]}")
+            st.write(f"  - Index {idx}: {final_input[0][idx]:.2f}")
     
     try:
         # Scale -> Predict -> Inverse Scale
@@ -204,3 +203,5 @@ if st.button("Predict Air Quality Index"):
         st.write("**Error Details:**")
         st.write(f"Input shape: {final_input.shape}")
         st.write(f"Expected by scaler: {scaler_x.n_features_in_}")
+        import traceback
+        st.code(traceback.format_exc())
