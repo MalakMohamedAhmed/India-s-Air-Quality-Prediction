@@ -7,7 +7,6 @@ import base64
 from PIL import Image
 
 
-# 1. Open the image using PIL
 image = Image.open('dotby.png')
 
 # 2. Display it in your app
