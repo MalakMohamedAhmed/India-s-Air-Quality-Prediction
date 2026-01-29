@@ -1,3 +1,16 @@
+---
+title: Indian Air Quality Prediction
+emoji: 🚀
+colorFrom: red
+colorTo: red
+sdk: docker
+app_port: 8501
+tags:
+  - streamlit
+pinned: false
+short_description: ANN model predicts india's air quality
+---
+
 [![Dataset](https://img.shields.io/badge/Dataset-Kaggle-blue.svg)](https://www.kaggle.com/datasets/vishardmehta/delhi-pollution-aqi-dataset)
 # 🌍 India Air Quality Index Analysis & Prediction
 An end-to-end Data Science project focusing on predicting the Air Quality Index (AQI) across various Indian states using **Classical Machine Learning** and **Deep Learning (ANN)**.
