@@ -12,7 +12,7 @@ def set_background(image_path):
     Set a background image for the Streamlit app
     
     Args:
-        image_path: Path to the image file (e.g., "jovyn-chamb-iWMfiInivp4-unsplash.jpg")
+        image_path: Path to the image file (e.g., "indea.jpg")
     """
     with open(image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
