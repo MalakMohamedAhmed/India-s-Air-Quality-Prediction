@@ -1,4 +1,4 @@
-[![Dataset](https://img.shields.io/badge/Dataset-Kaggle-blue.svg)](https://www.kaggle.com/datasets/shrutibhargava94/india-air-quality-data)
+[![Dataset](https://img.shields.io/badge/Dataset-Kaggle-blue.svg)](https://www.kaggle.com/datasets/vishardmehta/delhi-pollution-aqi-dataset)
 # 🌍 India Air Quality Index Analysis & Prediction
 An end-to-end Data Science project focusing on predicting the Air Quality Index (AQI) across various Indian states using **Classical Machine Learning** and **Deep Learning (ANN)**.
 
@@ -24,7 +24,7 @@ Air pollution is a critical environmental issue in India. This project analyzes 
 ## 📂 Dataset
 The dataset used in this project is sourced from Kaggle's **India Air Quality Data**. It contains historical daily air quality data across various cities in India.
 
-* **Source:** [India Air Quality Data on Kaggle](https://www.kaggle.com/datasets/shrutibhargava94/india-air-quality-data)
+* **Source:** [Delhi Pollution AQI Dataset on Kaggle](https://www.kaggle.com/datasets/vishardmehta/delhi-pollution-aqi-dataset)
 * **Size:** 200,000+ observations
 * **Format:** CSV
 
