@@ -4,7 +4,6 @@ import pandas as pd
 import joblib
 import tensorflow as tf
 
-# --- 1. Load Assets Safely ---
 @st.cache_resource
 def load_assets():
     # Use compile=False to avoid the 'mse' deserialization error
