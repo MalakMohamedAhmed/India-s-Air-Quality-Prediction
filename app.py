@@ -10,9 +10,54 @@ from PIL import Image
 dot = Image.open('dotby.png')
 indea = Image.open('indea.jpg')
 
-with st.expander("📸 Click to view image", expanded=False):
-    st.image(indea, use_column_width=True)
+import base64
+from io import BytesIO
 
+def get_image_base64(image_path):
+    """Convert image to base64 for HTML embedding"""
+    img = Image.open(image_path)
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    return img_str
+
+# Get base64 encoded image
+img_base64 = get_image_base64('indea.jpg')
+
+# Display with CSS for interactive zoom on hover
+st.markdown(
+    f"""
+    <style>
+    .zoom-container {{
+        width: 100%;
+        overflow: hidden;
+        cursor: pointer;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }}
+    .zoom-img {{
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+        display: block;
+    }}
+    .zoom-img:hover {{
+        transform: scale(1.05);
+    }}
+    .caption {{
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        margin-top: 8px;
+    }}
+    </style>
+    <div class="zoom-container">
+        <img src="data:image/jpeg;base64,{img_base64}" class="zoom-img" alt="dotby" onclick="window.open(this.src)">
+    </div>
+    <p class="caption">dotby - Click to view full size</p>
+    """,
+    unsafe_allow_html=True
+)
 # Or use it in the sidebar
 # st.sidebar.image(dot, use_container_width=True)
 
