@@ -25,7 +25,7 @@ def create_hero_section(image_path, title, subtitle):
         .hero-section {{
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 300px;
             background-image: url('data:image/jpeg;base64,{img_str}');
             background-size: cover;
             background-position: center;
@@ -71,54 +71,6 @@ def create_hero_section(image_path, title, subtitle):
 
 # Usage:
 create_hero_section('indea.jpg', '🌍 Air Quality Monitor', 'Predict and analyze air quality across India')
-
-
-# COMPLETE EXAMPLE FOR YOUR APP
-# ==============================
-"""
-Add this to your app_final.py:
-
-from PIL import Image
-import base64
-from io import BytesIO
-
-# After st.set_page_config() and before st.title():
-
-# Option A: Simple banner
-indea = Image.open('indea.jpg')
-st.image(indea, use_column_width=True)
-st.markdown("---")
-
-# Option B: Interactive with hover zoom (RECOMMENDED)
-def display_interactive_image(image_path, caption):
-    img = Image.open(image_path)
-    buffered = BytesIO()
-    img.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-    
-    st.markdown(
-        f'''
-        <style>
-        .img-zoom {{
-            width: 100%;
-            transition: transform 0.3s;
-            cursor: pointer;
-            border-radius: 10px;
-        }}
-        .img-zoom:hover {{
-            transform: scale(1.03);
-        }}
-        </style>
-        <img src="data:image/jpeg;base64,{img_str}" class="img-zoom" 
-             onclick="window.open(this.src)" alt="{caption}">
-        <p style="text-align:center; color:#666; font-style:italic;">{caption}</p>
-        ''',
-        unsafe_allow_html=True
-    )
-
-display_interactive_image('indea.jpg', 'dotby - Click to enlarge')
-st.markdown("---")
-"""
 
 
 
