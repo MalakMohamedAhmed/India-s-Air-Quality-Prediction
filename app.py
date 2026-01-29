@@ -3,54 +3,18 @@ import numpy as np
 import pandas as pd
 import joblib
 import tensorflow as tf
-
 import base64
+from PIL import Image
 
-# Function to set background image
-def set_background(image_path):
-    """
-    Set a background image for the Streamlit app
-    
-    Args:
-        image_path: Path to the image file (e.g., "indea.jpg")
-    """
-    with open(image_path, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode()
-    
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/jpg;base64,{encoded_string}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-        /* Add semi-transparent overlay for better readability */
-        .stApp::before {{
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.85);
-            z-index: 0;
-        }}
-        /* Ensure content is above overlay */
-        .main > div {{
-            position: relative;
-            z-index: 1;
-        }}
-        /* Style sidebar for better contrast */
-        [data-testid="stSidebar"] {{
-            background-color: rgba(240, 242, 246, 0.95);
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+
+# 1. Open the image using PIL
+image = Image.open('indea.png')
+
+# 2. Display it in your app
+st.image(image, caption='Our App Logo', width=300)
+
+# Or use it in the sidebar
+st.sidebar.image(image, use_container_width=True)
 
 @st.cache_resource
 def load_assets():
