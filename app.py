@@ -7,13 +7,14 @@ import base64
 from PIL import Image
 
 
-image = Image.open('dotby.png')
+dot = Image.open('dotby.png')
+indea = Image.open('indea.png')
 
 # 2. Display it in your app
-st.image(image, caption='Our App Logo', width=300)
+st.image(indea, caption='Our App Logo', width=300)
 
 # Or use it in the sidebar
-st.sidebar.image(image, use_container_width=True)
+st.sidebar.image(dot, use_container_width=True)
 
 @st.cache_resource
 def load_assets():
