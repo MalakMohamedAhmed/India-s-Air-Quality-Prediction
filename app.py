@@ -3,11 +3,15 @@ import numpy as np
 import joblib
 import tensorflow as tf
 import os
+from tensorflow.keras.losses import MeanSquaredError
 
 # --- 1. Load Assets Safely ---
 @st.cache_resource
 def load_assets():
-    model = tf.keras.models.load_model("model.h5")
+    model = tf.keras.models.load_model(
+    "model.h5", 
+    custom_objects={'mse': MeanSquaredError()}
+)
     # Use .sav files as seen in your Hugging Face screenshot
     scaler_x = joblib.load("scaler_x.sav")
     scaler_y = joblib.load("scaler_y.sav")
