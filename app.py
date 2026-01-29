@@ -334,14 +334,7 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     
    
         
-        # Scale input
-        scaled_input = scaler_x.transform(final_input)
-        
-        st.write("### 🔬 Scaled Input Analysis")
-        with st.expander("View Scaled Values"):
-            st.write(f"**Scaled Input Shape:** {scaled_input.shape}")
-            st.write(f"**Scaled Input (first 20 values):** {scaled_input[0][:20]}")
-            st.write(f"**Scaled Input (min/max):** {scaled_input.min():.4f} / {scaled_input.max():.4f}")
+       
             
             # Check for extreme values
             extreme_indices = np.where(np.abs(scaled_input[0]) > 10)[0]
@@ -353,16 +346,6 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
         # Predict
         prediction_scaled = model.predict(scaled_input, verbose=0)
         
-        st.write("### 🎯 Model Prediction Analysis")
-        with st.expander("View Model Output"):
-            st.write(f"**Model Output (Scaled):** {prediction_scaled[0][0]:.6f}")
-            st.write(f"**Model Output Shape:** {prediction_scaled.shape}")
-            
-            # Check y_scaler parameters
-            if hasattr(scaler_y, 'mean_'):
-                st.write(f"**Y Scaler mean:** {scaler_y.mean_}")
-            if hasattr(scaler_y, 'scale_'):
-                st.write(f"**Y Scaler scale:** {scaler_y.scale_}")
         
         # Inverse transform
         prediction_final = scaler_y.inverse_transform(prediction_scaled)
