@@ -8,56 +8,120 @@ from PIL import Image
 
 
 dot = Image.open('dotby.png')
-indea = Image.open('indea.jpg')
 
 import base64
 from io import BytesIO
 
-def get_image_base64(image_path):
-    """Convert image to base64 for HTML embedding"""
+def create_hero_section(image_path, title, subtitle):
+    """Create a hero section with background image and overlay text"""
+    img = Image.open('indea.jpg')
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    st.markdown(
+        f"""
+        <style>
+        .hero-section {{
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-image: url('data:image/jpeg;base64,{img_str}');
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }}
+        .hero-section:hover {{
+            transform: scale(1.02);
+        }}
+        .hero-overlay {{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 30px;
+            color: white;
+        }}
+        .hero-title {{
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }}
+        .hero-subtitle {{
+            font-size: 1.2rem;
+            margin: 10px 0 0 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }}
+        </style>
+        <div class="hero-section" onclick="window.open('data:image/jpeg;base64,{img_str}')">
+            <div class="hero-overlay">
+                <h1 class="hero-title">{title}</h1>
+                <p class="hero-subtitle">{subtitle}</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# Usage:
+create_hero_section('indea.jpg', '🌍 Air Quality Monitor', 'Predict and analyze air quality across India')
+
+
+# COMPLETE EXAMPLE FOR YOUR APP
+# ==============================
+"""
+Add this to your app_final.py:
+
+from PIL import Image
+import base64
+from io import BytesIO
+
+# After st.set_page_config() and before st.title():
+
+# Option A: Simple banner
+indea = Image.open('indea.jpg')
+st.image(indea, use_column_width=True)
+st.markdown("---")
+
+# Option B: Interactive with hover zoom (RECOMMENDED)
+def display_interactive_image(image_path, caption):
     img = Image.open(image_path)
     buffered = BytesIO()
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
-    return img_str
+    
+    st.markdown(
+        f'''
+        <style>
+        .img-zoom {{
+            width: 100%;
+            transition: transform 0.3s;
+            cursor: pointer;
+            border-radius: 10px;
+        }}
+        .img-zoom:hover {{
+            transform: scale(1.03);
+        }}
+        </style>
+        <img src="data:image/jpeg;base64,{img_str}" class="img-zoom" 
+             onclick="window.open(this.src)" alt="{caption}">
+        <p style="text-align:center; color:#666; font-style:italic;">{caption}</p>
+        ''',
+        unsafe_allow_html=True
+    )
 
-# Get base64 encoded image
-img_base64 = get_image_base64('indea.jpg')
+display_interactive_image('indea.jpg', 'dotby - Click to enlarge')
+st.markdown("---")
+"""
 
-# Display with CSS for interactive zoom on hover
-st.markdown(
-    f"""
-    <style>
-    .zoom-container {{
-        width: 100%;
-        overflow: hidden;
-        cursor: pointer;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }}
-    .zoom-img {{
-        width: 100%;
-        height: auto;
-        transition: transform 0.3s ease;
-        display: block;
-    }}
-    .zoom-img:hover {{
-        transform: scale(1.05);
-    }}
-    .caption {{
-        text-align: center;
-        color: #666;
-        font-style: italic;
-        margin-top: 8px;
-    }}
-    </style>
-    <div class="zoom-container">
-        <img src="data:image/jpeg;base64,{img_base64}" class="zoom-img" alt="dotby" onclick="window.open(this.src)">
-    </div>
-    <p class="caption">dotby - Click to view full size</p>
-    """,
-    unsafe_allow_html=True
-)
+
+
 # Or use it in the sidebar
 # st.sidebar.image(dot, use_container_width=True)
 
