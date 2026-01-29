@@ -10,8 +10,8 @@ from PIL import Image
 dot = Image.open('dotby.png')
 indea = Image.open('indea.jpg')
 
-# 2. Display it in your app
-st.image(indea, caption='dotby', width=500)
+with st.expander("📸 Click to view image", expanded=False):
+    st.image(indea, use_column_width=True)
 
 # Or use it in the sidebar
 # st.sidebar.image(dot, use_container_width=True)
