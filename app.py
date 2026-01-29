@@ -3,7 +3,7 @@ import numpy as np
 import joblib
 from tensorflow.keras.models import load_model
 
-model = load_model("model.h5")
+model = load_model("aqi_ann_model.keras")
 scaler_x = joblib.load("scaler_x.sav")
 scaler_y = joblib.load("scaler_y.sav")
 
