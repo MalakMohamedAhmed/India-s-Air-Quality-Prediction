@@ -8,7 +8,7 @@ from PIL import Image
 
 
 # 1. Open the image using PIL
-image = Image.open('indea.png')
+image = Image.open('dotby.png')
 
 # 2. Display it in your app
 st.image(image, caption='Our App Logo', width=300)
