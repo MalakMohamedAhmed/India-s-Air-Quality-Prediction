@@ -76,7 +76,7 @@ def create_hero_section(image_path, title, subtitle):
     )
 
 # Usage:
-create_hero_section('indea.jpg', '🌍 Air Quality Monitor', 'Predict and analyze air quality across India')
+create_hero_section('indea.jpg', '🌍 Indian Air Quality Prediction (ANN)', 'Predict and analyze air quality across India')
 
 
 
@@ -139,7 +139,6 @@ seasons = ['season_monsoon', 'season_post_monsoon', 'season_summer', 'season_win
 
 # --- 4. UI Layout ---
 st.set_page_config(page_title="India AQI Predictor", layout="wide")
-st.title("🌍 Indian Air Quality Prediction (ANN)")
 
 with st.sidebar:
     st.header("📍 Location & Time")
