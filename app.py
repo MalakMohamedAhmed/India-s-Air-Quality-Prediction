@@ -14,7 +14,7 @@ from io import BytesIO
 
 with st.sidebar:
     logo = Image.open('dotby.png')
-    st.image(logo, use_column_width=True)
+    st.image(logo)
     st.markdown("---")
     
 
