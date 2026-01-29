@@ -8,7 +8,7 @@ import tensorflow as tf
 @st.cache_resource
 def load_assets():
     # Use compile=False to avoid the 'mse' deserialization error
-    model = tf.keras.models.load_model("my_model.keras", compile=False)
+    model = tf.keras.models.load_model("my_model.h5", compile=False)
     scaler_x = joblib.load("scaler_x.sav")
     scaler_y = joblib.load("scaler_y.sav")
     return model, scaler_x, scaler_y
