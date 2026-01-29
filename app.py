@@ -20,7 +20,7 @@ with st.sidebar:
 
 def create_hero_section(image_path, title, subtitle):
     """Create a hero section with background image and overlay text"""
-    img = Image.open('indea.jpg')
+    img = Image.open('WhatsApp Image 2026-01-30 at 12.51.40 AM.jpeg')
     buffered = BytesIO()
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
