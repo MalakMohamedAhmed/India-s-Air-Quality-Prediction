@@ -20,7 +20,7 @@ with st.sidebar:
 
 def create_hero_section(image_path, title, subtitle):
     """Create a hero section with background image and overlay text"""
-    img = Image.open('WhatsApp Image 2026-01-30 at 12.51.40 AM.jpeg')
+    img = Image.open('WhatsApp Image 2026-01-30 at 12.51.40 AM.png')
     buffered = BytesIO()
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
@@ -244,8 +244,7 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     gpi = calculate_gpi(so2, no2, co)
     pm_coarse = calculate_pm_coarse(pm10, pm25)
     
-    # Display calculated values
-    st.info(f"📊 **Calculated Values:** GPI = {gpi:.2f}, PM Coarse = {pm_coarse:.2f}")
+   
     
     # Initialize input list with 49 features (all columns except index 8 which is aqi)
     # Feature order in the model input:
@@ -333,20 +332,7 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
         for idx in non_zero_indices:
             st.write(f"  - Index {idx}: {final_input[0][idx]:.2f}")
     
-    try:
-        # Display raw input before scaling
-        st.write("### 📊 Raw Input Analysis")
-        with st.expander("View Raw Input Values"):
-            st.write(f"**Raw input array (first 20 values):**")
-            st.write(final_input[0][:20])
-            st.write(f"\n**Scaler expects {scaler_x.n_features_in_} features**")
-            st.write(f"**We're providing {final_input.shape[1]} features**")
-            
-            # Check scaler parameters
-            if hasattr(scaler_x, 'mean_'):
-                st.write(f"\n**Scaler mean (first 10):** {scaler_x.mean_[:10]}")
-            if hasattr(scaler_x, 'scale_'):
-                st.write(f"**Scaler scale (first 10):** {scaler_x.scale_[:10]}")
+   
         
         # Scale input
         scaled_input = scaler_x.transform(final_input)
@@ -381,14 +367,6 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
         # Inverse transform
         prediction_final = scaler_y.inverse_transform(prediction_scaled)
         
-        st.write("### 📈 Final Prediction")
-        with st.expander("View Inverse Transform"):
-            st.write(f"**Before Inverse Transform:** {prediction_scaled[0][0]:.6f}")
-            st.write(f"**After Inverse Transform:** {prediction_final[0][0]:.6f}")
-            st.write(f"**After Clipping [0, 500]:** {np.clip(prediction_final[0][0], 0, 500):.2f}")
-        
-        aqi_res_raw = prediction_final[0][0]
-        aqi_res = np.clip(aqi_res_raw, 0, 500)
         
         # Show warning if clipping occurred
         if aqi_res_raw < 0:
@@ -473,13 +451,3 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
 
 # Footer
 st.markdown("---")
-st.markdown("### ℹ️ About")
-st.markdown("""
-This application predicts Air Quality Index (AQI) using an Artificial Neural Network trained on Indian air quality data.
-
-**Pollutant Calculations:**
-- **GPI (Gaseous Pollutant Index)**: Calculated from SO2, NO2, and CO concentrations
-- **PM Coarse**: Calculated as PM10 - PM2.5
-
-**Note**: The model uses calculated GPI and PM Coarse values, not the individual pollutants directly.
-""")
