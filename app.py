@@ -65,7 +65,7 @@ with col2:
     wind_speed = st.number_input("Wind Speed", value=5.0)
 
 with col3:
-    vis = st.number_input("Visibility", value=10.0)
+    visibility = st.number_input("Visibility", value=10.0)
     gpi = st.number_input("GPI (Gaseous Pollutant Index)", value=0.0)
     pm_coarse = st.number_input("PM Coarse", value=0.0)
 
