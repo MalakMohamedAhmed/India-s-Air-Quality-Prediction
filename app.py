@@ -107,8 +107,8 @@ if st.button("Predict Air Quality Index"):
     
     # Set station dummy
     station_start = 19
-    for i, st in enumerate(stations):
-        if st == selected_station:
+    for i, st_name in enumerate(stations):
+        if st_name == selected_station:
             input_list[station_start + i] = 1.0
             break
     
@@ -134,4 +134,4 @@ if st.button("Predict Air Quality Index"):
         if aqi_res <= 100:
             st.balloons()
     except Exception as e:
-        st.error(f"Prediction failed: {e}")
+        st.write(f"Prediction failed: {e}")  # Changed to st.write to avoid potential attribute issues
