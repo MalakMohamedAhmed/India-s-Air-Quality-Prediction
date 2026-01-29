@@ -8,10 +8,10 @@ from PIL import Image
 
 
 dot = Image.open('dotby.png')
-indea = Image.open('indea.png')
+indea = Image.open('indea.jpg')
 
 # 2. Display it in your app
-st.image(indea, caption='dotby', width=300)
+st.image(indea, caption='dotby', width=500)
 
 # Or use it in the sidebar
 # st.sidebar.image(dot, use_container_width=True)
