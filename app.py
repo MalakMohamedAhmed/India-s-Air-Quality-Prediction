@@ -1,9 +1,10 @@
 import streamlit as st
 import numpy as np
 import joblib
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 
-model = load_model("model.h5")
+model = tf.keras.models.load_model("model.h5")
 scaler_x = joblib.load("scaler_x.sav")
 scaler_y = joblib.load("scaler_y.sav")
 
