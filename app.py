@@ -15,7 +15,7 @@ def load_assets():
 
 model, scaler_x, scaler_y = load_assets()
 
-# --- 2. Feature Definitions from your Image ---
+# --- 2. Feature Definitions ---
 # Lists for dummy variables to be handled by dropdowns
 stations = [
     'station_Bawana, Delhi', 'station_Dwarka Sec 8, Delhi', 'station_Faridabad New Town',
@@ -42,13 +42,13 @@ with st.sidebar:
     st.header("📍 Location & Time")
     selected_city = st.selectbox("Select City", cities)
     selected_station = st.selectbox("Select Station", stations)
-    selected_day = st.selectbox("Day of Week", ["Friday"] + days_of_week) # Friday is likely the dropped column
+    selected_day = st.selectbox("Day of Week", ["Friday"] + days_of_week)  # Friday is the reference (all dummies 0)
     
     st.header("🗓️ Season")
-    # Using bool logic for seasons
+    # Using checkboxes for seasons (bool, treated as 0.0 or 1.0)
+    s_monsoon = st.checkbox("Post Monsoon")
     s_summer = st.checkbox("Summer")
     s_winter = st.checkbox("Winter")
-    s_monsoon = st.checkbox("Post Monsoon")
 
 st.subheader("🧪 Pollutant Concentrations & Weather")
 col1, col2, col3 = st.columns(3)
@@ -71,35 +71,56 @@ with col3:
 
 # --- 4. Prediction Logic ---
 if st.button("Predict Air Quality Index"):
-    # 1. Initialize a dictionary with all 47 features set to 0/False
-    # Based on your image: 47 total columns
-    input_dict = {col: 0.0 for col in range(47)} 
+    # Initialize input list with 45 features (excluding aqi and aqi_category)
+    # Order: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility, GPI, pm_coarse,
+    # season_post_monsoon, season_summer, season_winter,
+    # day_of_week_Monday, day_of_week_Saturday, day_of_week_Sunday, day_of_week_Thursday, day_of_week_Tuesday, day_of_week_Wednesday,
+    # 22 station dummies, 4 city dummies
+    input_list = [0.0] * 45
     
-    # We must map input names to their EXACT column index from your image
-    # Mapping based on image_1969f6.png column indices:
-    features = {
-        0: month, 1: hour, 2: is_weekend, 3: o3, 4: temp, 5: humidity,
-        6: wind_speed, 7: visibility, 10: gpi, 11: pm_coarse,
-        12: s_monsoon, 13: s_summer, 14: s_winter
+    # Set continuous and manual values
+    input_list[0] = month
+    input_list[1] = hour
+    input_list[2] = is_weekend
+    input_list[3] = o3
+    input_list[4] = temp
+    input_list[5] = humidity
+    input_list[6] = wind_speed
+    input_list[7] = visibility
+    input_list[8] = gpi
+    input_list[9] = pm_coarse
+    input_list[10] = float(s_monsoon)  # Convert bool to float
+    input_list[11] = float(s_summer)
+    input_list[12] = float(s_winter)
+    
+    # Set day of week dummy (Friday is reference, all 0)
+    day_mapping = {
+        'day_of_week_Monday': 13,
+        'day_of_week_Saturday': 14,
+        'day_of_week_Sunday': 15,
+        'day_of_week_Thursday': 16,
+        'day_of_week_Tuesday': 17,
+        'day_of_week_Wednesday': 18
     }
+    if selected_day in day_mapping:
+        input_list[day_mapping[selected_day]] = 1.0
     
-    # 2. Update Continuous/Manual values
-    for idx, val in features.items():
-        input_dict[idx] = val
-        
-    # 3. Handle Dropdowns (Setting selected to 1.0)
-    # We find the index of the selected string in the full list and set it
-    for i, col_name in enumerate(days_of_week, start=15): # Days start at index 15
-        if col_name == selected_day: input_dict[i] = 1.0
-        
-    for i, col_name in enumerate(stations, start=21): # Stations start at index 21
-        if col_name == selected_station: input_dict[i] = 1.0
-        
-    for i, col_name in enumerate(cities, start=43): # Cities start at index 43
-        if col_name == selected_city: input_dict[i] = 1.0
-
-    # Convert dict to array and ensure correct shape (1, 47)
-    final_input = np.array([list(input_dict.values())])
+    # Set station dummy
+    station_start = 19
+    for i, st in enumerate(stations):
+        if st == selected_station:
+            input_list[station_start + i] = 1.0
+            break
+    
+    # Set city dummy
+    city_start = 41
+    for i, ct in enumerate(cities):
+        if ct == selected_city:
+            input_list[city_start + i] = 1.0
+            break
+    
+    # Convert to numpy array
+    final_input = np.array([input_list])
     
     try:
         # Scale -> Predict -> Inverse Scale
@@ -110,6 +131,7 @@ if st.button("Predict Air Quality Index"):
         aqi_res = prediction_final[0][0]
         st.success(f"### Predicted AQI: {aqi_res:.2f}")
         
-        if aqi_res <= 100: st.balloons()
+        if aqi_res <= 100:
+            st.balloons()
     except Exception as e:
         st.error(f"Prediction failed: {e}")
