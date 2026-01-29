@@ -62,7 +62,7 @@ with col2:
     o3 = st.number_input("O3", value=0.0)
     temp = st.number_input("Temperature", value=25.0)
     humidity = st.number_input("Humidity (%)", value=50.0)
-    wind = st.number_input("Wind Speed", value=5.0)
+    wind_speed = st.number_input("Wind Speed", value=5.0)
 
 with col3:
     vis = st.number_input("Visibility", value=10.0)
