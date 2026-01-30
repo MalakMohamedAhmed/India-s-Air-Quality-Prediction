@@ -379,13 +379,6 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
             st.error(f"### ⚫ Predicted AQI: {aqi_res:.2f} - Severe")
             st.info("Health alert: Everyone may experience serious health effects. This is an emergency situation.")
             
-    except Exception as e:
-        st.error(f"❌ Prediction failed: {str(e)}")
-        st.write("**Error Details:**")
-        st.write(f"Input shape: {final_input.shape}")
-        st.write(f"Expected by scaler: {scaler_x.n_features_in_}")
-        import traceback
-        st.code(traceback.format_exc())
     
     # Save debug data
     if st.button("💾 Save Debug Data"):
