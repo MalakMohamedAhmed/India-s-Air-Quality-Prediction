@@ -115,7 +115,6 @@ def calculate_pm_coarse(pm10, pm25):
     pm_coarse = max(0.0, pm_coarse)
     return pm_coarse
 
-# --- 3. Feature Definitions ---
 stations = [
     'station_Anand Vihar, Delhi', 'station_Bawana, Delhi', 'station_Dwarka Sec 8, Delhi',
     'station_Faridabad New Town', 'station_Faridabad Sec 16A', 'station_Ghaziabad Loni',
