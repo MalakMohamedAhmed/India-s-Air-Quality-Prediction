@@ -95,7 +95,7 @@ The model has been deployed as an interactive web application using **Streamlit*
 * **Real-time Prediction:** Users can input pollutant concentrations ($SO_2, NO_2, PM_{2.5}$, etc.) and weather parameters to get an instant AQI forecast.
 * **Accessibility:** This deployment demonstrates the transition of the model from a research environment to a user-friendly production tool.
 
-👉 **[Access the Live App on Hugging Face Spaces](INSERT_YOUR_HUGGING_FACE_LINK_HERE)**
+👉 **[Access the Live App on Hugging Face Spaces](https://malakmohamed21-indian-air-quality-prediction.hf.space)**
 
 ---
 
@@ -105,7 +105,7 @@ To facilitate the communication of findings to stakeholders, a comprehensive set
 * **Architecture Walkthrough:** Visual representations of the ANN structure and the feature engineering pipeline.
 * **Impact Analysis:** Clear visualizations of model performance and how it can be utilized for public health alerts.
 
-📂 **[Download/View Presentation Slides](INSERT_LINK_TO_YOUR_SLIDES_HERE)**
+📂 **[Download/View Presentation Slides](https://www.canva.com/design/DAG_1GRpYv0/HvMNSQyPq2xeQhayD7pyqQ/view?utm_content=DAG_1GRpYv0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h44c46335ec)**
 
 ---
 
