@@ -27,7 +27,7 @@ An end-to-end Data Science project focusing on predicting the Air Quality Index 
 
 ---
 
-## 🚀 Project Overview
+## 📒 Project Overview
 Air pollution is a critical environmental issue in India. This project analyzes historical data (200,000+ records) to build a predictive system that can forecast AQI based on chemical pollutants ($SO_2$, $NO_2$, $PM_{2.5}$, etc.).
 
 **Core Objective:** To compare the efficacy of traditional regression models against Artificial Neural Networks (ANN) in predicting high-variance pollution spikes.
@@ -40,6 +40,13 @@ The dataset used in this project is sourced from Kaggle's **India Air Quality Da
 * **Source:** [Delhi Pollution AQI Dataset on Kaggle](https://www.kaggle.com/datasets/vishardmehta/delhi-pollution-aqi-dataset)
 * **Size:** 200,000+ observations
 * **Format:** CSV
+
+---
+
+# 🚀 Kaggle Notebook
+Access the full python notebook on Kaggle:
+
+[India's Air Quality prediction on kaggle](https://www.kaggle.com/code/mennallahgamal/india-s-air-quality-prediction#Insights)
 
 ---
 
