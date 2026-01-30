@@ -333,14 +333,6 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     
    
         
-       
-            
-            # Check for extreme values
-            extreme_indices = np.where(np.abs(scaled_input[0]) > 10)[0]
-            if len(extreme_indices) > 0:
-                st.warning(f"⚠️ Found {len(extreme_indices)} features with extreme scaled values (>10 or <-10):")
-                for idx in extreme_indices[:10]:  # Show first 10
-                    st.write(f"  - Index {idx}: {scaled_input[0][idx]:.2f} (raw: {final_input[0][idx]:.2f})")
         
         # Predict
         prediction_scaled = model.predict(scaled_input, verbose=0)
