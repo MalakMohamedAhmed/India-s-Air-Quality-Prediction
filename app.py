@@ -74,7 +74,7 @@ def create_hero_section(image_path, title, subtitle):
     )
 
 # Usage:
-create_hero_section('indea.jpg', '🌍 Indian Air Quality Prediction (ANN)', 'Predict and analyze air quality across India')
+create_hero_section('indea.jpg', '🌍 Indian Air Quality Prediction (ANN)', 'Predict air quality across India')
 
 
 @st.cache_resource
@@ -233,7 +233,7 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     pm_coarse = calculate_pm_coarse(pm10, pm25)
     
     # Display calculated values
-    st.info(f"📊 **Calculated Values:** GPI = {gpi:.2f}, PM Coarse = {pm_coarse:.2f}")
+   
     
     # Initialize input list with 49 features
     input_list = [0.0] * 49
