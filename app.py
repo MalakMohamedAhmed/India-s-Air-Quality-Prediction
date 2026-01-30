@@ -5,12 +5,10 @@ import joblib
 import tensorflow as tf
 import base64
 from PIL import Image
+from io import BytesIO
 
 
 dot = Image.open('dotby.png')
-
-import base64
-from io import BytesIO
 
 with st.sidebar:
     logo = Image.open('dotby.png')
@@ -79,10 +77,6 @@ def create_hero_section(image_path, title, subtitle):
 create_hero_section('indea.jpg', '🌍 Indian Air Quality Prediction (ANN)', 'Predict and analyze air quality across India')
 
 
-
-# Or use it in the sidebar
-# st.sidebar.image(dot, use_container_width=True)
-
 @st.cache_resource
 def load_assets():
     # Use compile=False to avoid the 'mse' deserialization error
@@ -97,11 +91,7 @@ model, scaler_x, scaler_y = load_assets()
 def calculate_gpi(so2, no2, co):
     """
     Calculate Gaseous Pollutant Index (GPI) from SO2, NO2, and CO
-    GPI is typically a weighted sum or average of gaseous pollutants
-    Adjust the formula based on your training data methodology
     """
-    # Common formula: weighted average based on pollutant concentrations
-    # You may need to adjust weights based on how GPI was calculated in training
     gpi = (so2 * 0.3 + no2 * 0.5 + co * 0.2)
     return gpi
 
@@ -111,7 +101,6 @@ def calculate_pm_coarse(pm10, pm25):
     PM_coarse = PM10 - PM2.5
     """
     pm_coarse = pm10 - pm25
-    # Ensure non-negative
     pm_coarse = max(0.0, pm_coarse)
     return pm_coarse
 
@@ -243,22 +232,13 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     gpi = calculate_gpi(so2, no2, co)
     pm_coarse = calculate_pm_coarse(pm10, pm25)
     
-   
+    # Display calculated values
+    st.info(f"📊 **Calculated Values:** GPI = {gpi:.2f}, PM Coarse = {pm_coarse:.2f}")
     
-    # Initialize input list with 49 features (all columns except index 8 which is aqi)
-    # Feature order in the model input:
-    # 0-7: month, hour, is_weekend, o3, temperature, humidity, wind_speed, visibility
-    # [skip index 8: aqi]
-    # 8: GPI (column 9 in dataframe) - CALCULATED
-    # 9: pm_coarse (column 10 in dataframe) - CALCULATED
-    # 10-13: season_monsoon, season_post_monsoon, season_summer, season_winter (columns 11-14)
-    # 14-20: day_of_week_Friday through Wednesday (columns 15-21)
-    # 21-43: 23 station dummies (columns 22-44)
-    # 44-48: 5 city dummies (columns 45-49)
-    
+    # Initialize input list with 49 features
     input_list = [0.0] * 49
     
-    # Set continuous values (indices 0-7 - same in both dataframe and model input)
+    # Set continuous values (indices 0-7)
     input_list[0] = float(month)
     input_list[1] = float(hour)
     input_list[2] = float(is_weekend)
@@ -266,16 +246,13 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     input_list[4] = float(temp)
     input_list[5] = float(humidity)
     input_list[6] = float(wind_speed)
-    # Note: Visibility is inverted because the model learned inverse relationship
-    # Higher visibility = better air quality = lower AQI
-    # So we use negative visibility to correct the prediction direction
-    input_list[7] = -float(visibility)
+    input_list[7] = -float(visibility)  # Inverted
     
-    # Set CALCULATED GPI and pm_coarse (indices 8-9 in model input, columns 9-10 in dataframe)
+    # Set CALCULATED GPI and pm_coarse (indices 8-9)
     input_list[8] = float(gpi)
     input_list[9] = float(pm_coarse)
     
-    # Set season dummies (indices 10-13 in model input, columns 11-14 in dataframe)
+    # Set season dummies (indices 10-13)
     season_mapping = {
         'season_monsoon': 10,
         'season_post_monsoon': 11,
@@ -285,7 +262,7 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     if selected_season in season_mapping:
         input_list[season_mapping[selected_season]] = 1.0
     
-    # Set day of week dummy (indices 14-20 in model input, columns 15-21 in dataframe)
+    # Set day of week dummy (indices 14-20)
     day_mapping = {
         'day_of_week_Friday': 14,
         'day_of_week_Monday': 15,
@@ -298,14 +275,14 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
     if selected_day in day_mapping:
         input_list[day_mapping[selected_day]] = 1.0
     
-    # Set station dummy (indices 21-43 in model input, columns 22-44 in dataframe)
+    # Set station dummy (indices 21-43)
     station_start = 21
     for i, st_name in enumerate(stations):
         if st_name == selected_station:
             input_list[station_start + i] = 1.0
             break
     
-    # Set city dummy (indices 44-48 in model input, columns 45-49 in dataframe)
+    # Set city dummy (indices 44-48)
     city_start = 44
     for i, ct in enumerate(cities):
         if ct == selected_city:
@@ -331,16 +308,19 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
         for idx in non_zero_indices:
             st.write(f"  - Index {idx}: {final_input[0][idx]:.2f}")
     
-   
-        
+    try:
+        # Scale input
+        scaled_input = scaler_x.transform(final_input)
         
         # Predict
         prediction_scaled = model.predict(scaled_input, verbose=0)
         
-        
         # Inverse transform
         prediction_final = scaler_y.inverse_transform(prediction_scaled)
         
+        # Get final AQI value
+        aqi_res_raw = prediction_final[0][0]
+        aqi_res = np.clip(aqi_res_raw, 0, 500)
         
         # Show warning if clipping occurred
         if aqi_res_raw < 0:
@@ -369,7 +349,15 @@ if st.button("🔮 Predict Air Quality Index", type="primary"):
         else:
             st.error(f"### ⚫ Predicted AQI: {aqi_res:.2f} - Severe")
             st.info("Health alert: Everyone may experience serious health effects. This is an emergency situation.")
-            
+    
+    except Exception as e:
+        st.error(f"❌ Prediction failed: {str(e)}")
+        st.write("**Error Details:**")
+        st.write(f"Input shape: {final_input.shape}")
+        if hasattr(scaler_x, 'n_features_in_'):
+            st.write(f"Expected by scaler: {scaler_x.n_features_in_}")
+        import traceback
+        st.code(traceback.format_exc())
     
     # Save debug data
     if st.button("💾 Save Debug Data"):
